@@ -427,6 +427,13 @@ int main(int argc, char * argv[])
 		po::variables_map vm;
 		store(parse_command_line(argc, argv, all), vm);
 		notify(vm);
+		// help 
+		if (vm.count("help")) 
+		{
+			cout << visible << "\n";
+			exit(0);
+		}
+	
 	}
 	catch(exception& e)
 	{
@@ -435,14 +442,19 @@ int main(int argc, char * argv[])
 		cerr << "Break." << endl;
 		exit(1);
 	}
+
 	// Inverse temperature (dimensionless)
 	double beta=D0/(k_b*T);
 	double Delta=0.0;
 	//plotDn(beta, n_cc, D0);
 	//plotFunctions(Delta, beta, n_cc, D0);
 	getDelta(Delta, beta, n_cc, D0);
-	cout << "Delta is: " << Delta << endl;
+	cout << scientific << setprecision(15) << Delta << endl;
+	ofstream out ("delta_r.dat");
+	out << scientific << setprecision(15) << Delta << endl;
+	out.close();
 
+	/*
 	ofstream out ("delta_vs_ncc_left.dat");
 	for (double n=0.00; n<=0.0005; n+=5E-7)
 	{
@@ -464,4 +476,5 @@ int main(int argc, char * argv[])
 		cout << scientific << setprecision(15) << n << "\t" << Delta << endl;
 	}
 	out.close();
+	*/
 }
