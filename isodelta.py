@@ -1,9 +1,6 @@
 #!/usr/bin/python
 
-import subprocess
-from sys import *
 import os
-from math import *
 
 ##############################################################################
 ##### Extract results from a given folder ####################################
@@ -28,7 +25,7 @@ def extractResultValue (filename):
 def isResults (resultsFolder):
 	parafilename="%s/parameter.cfg" % resultsFolder
 	mufilename="%s/results/mu.dat" % resultsFolder
-	if os.path.exists(parafilename) and os.path.exists(parafilename):
+	if os.path.exists(parafilename) and os.path.exists(mufilename):
 		return True
 	else:
 		return False
@@ -45,7 +42,7 @@ def extractResults (resultsFolder):
 	if impurity=='Gd':
 		material='EuO'
 	elif impurity=='None':
-		material='Substrate'
+		material='Sub'
 	else:
 		print "Error: Unable to extract material type from folder %s" % resultsFolder
 		exit(1)
@@ -66,17 +63,13 @@ def string(val):
 	else:
 		print "Error: Sting conversion: Unknown type. Break"
 		exit(1)
-class table:
+class database:
 	def __init__(self):
 		self.names=('material', 'N', 'nc', 'T', 'Delta')
 
 	def write(self, filename):
 		f=open(filename, 'w')
-		f.write('#')
-		for n in self.names:
-			f.write(n)
-			f.write('\t')
-		f.write('\n')
+		f.write('#mat\tN\tnc\t\t\tT\t\t\tDelta\n')
 
 		for d in self.data:
 			for val in d:
@@ -131,30 +124,4 @@ class table:
 					self.data.append(extractResults(folder))
 
 		# sort by temperature
-		self.data=sorted(self.data, key = lambda element : element[3])
-
-##############################################################################
-##### Update database ########################################################
-##############################################################################
-def main():
-	if (len(argv))<1+2:
-		stderr.write( """not enought arguments. call with
-		1.) Output filename 
-		2.) Result folders of the bulk runs
-		\n""")
-		exit(1)
-	#parameter
-	filename=argv[1]
-	topResultsFolders=argv[2:]
-
-	t=table()
-	t.extract(topResultsFolders)
-	t.write(filename)
-	t.read(filename)
-	for d in t.data:
-		print d
-	print t.exists('Substrate', 3, 0.5, 88.0)
-	print t.getDelta('Substrate', 3, 0.5, 88.0)
-	
-if __name__=="__main__":
-	main()
+		self.data=sorted(self.data, key = lambda element : element[0])
